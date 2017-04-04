@@ -1,6 +1,6 @@
 <?php
 
-namespace Mpociot\Documentarian;
+namespace ElevenLab\Documentarian;
 
 use Mni\FrontYAML\Parser;
 use Windwalker\Renderer\BladeRenderer;
@@ -20,7 +20,7 @@ class Documentarian
      */
     public function config($folder, $key = null)
     {
-        $config = include($folder . '/source/config.php');
+        $config = include($folder . '/config.php');
 
         return is_null($key) ? $config : array_get($config, $key);
     }
@@ -32,29 +32,79 @@ class Documentarian
      */
     public function create($folder)
     {
-        $folder = $folder . '/source';
+
         if (!is_dir($folder)) {
             mkdir($folder, 0777, true);
-            mkdir($folder . '/../css');
-            mkdir($folder . '/../js');
-            mkdir($folder . '/includes');
+            mkdir($folder . '/public');
+            mkdir($folder . '/public/css');
+            mkdir($folder . '/public/js');
             mkdir($folder . '/assets');
+            mkdir($folder . '/source');
         }
 
         // copy stub files
-        copy(__DIR__ . '/../resources/stubs/index.md', $folder . '/index.md');
         copy(__DIR__ . '/../resources/stubs/gitignore.stub', $folder . '/.gitignore');
-        copy(__DIR__ . '/../resources/stubs/includes/_errors.md', $folder . '/includes/_errors.md');
         copy(__DIR__ . '/../resources/stubs/package.json', $folder . '/package.json');
         copy(__DIR__ . '/../resources/stubs/gulpfile.js', $folder . '/gulpfile.js');
         copy(__DIR__ . '/../resources/stubs/config.php', $folder . '/config.php');
-        copy(__DIR__ . '/../resources/stubs/js/all.js', $folder . '/../js/all.js');
-        copy(__DIR__ . '/../resources/stubs/css/style.css', $folder . '/../css/style.css');
+        copy(__DIR__ . '/../resources/stubs/js/all.js', $folder . '/public/js/all.js');
+        copy(__DIR__ . '/../resources/stubs/css/style.css', $folder . '/public/css/style.css');
 
-        // copy resources
-        rcopy(__DIR__ . '/../resources/images/', $folder . '/assets/images');
-        rcopy(__DIR__ . '/../resources/js/', $folder . '/assets/js');
-        rcopy(__DIR__ . '/../resources/stylus/', $folder . '/assets/stylus');
+        // copy raw assets
+        rcopy(__DIR__ . '/../resources/stylus', $folder . '/assets/stylus');
+        rcopy(__DIR__ . '/../resources/images', $folder . '/assets/images');
+        rcopy(__DIR__ . '/../resources/js', $folder . '/assets/js');
+
+        // copy calculated resources
+        rcopy(__DIR__ . '/../resources/images/', $folder . '/public/images');
+        rcopy(__DIR__ . '/../resources/js/', $folder . '/public/js');
+        rcopy(__DIR__ . '/../resources/stylus/fonts', $folder . '/public/css/fonts');
+        rcopy(__DIR__ . '/../resources/views/' , $folder . '/views');
+    }
+
+
+    /**
+     * Create a new API documentation version folder and copy all needed stubs
+     *
+     * @param version
+     */
+    public function createVersion($folder)
+    {
+
+        if(!is_dir($folder)){
+            mkdir($folder);
+            mkdir($folder . '/includes');
+        }
+
+        copy(__DIR__ . '/../resources/stubs/index.md', $folder . '/index.md');
+        copy(__DIR__ . '/../resources/stubs/includes/_errors.md', $folder . '/includes/_errors.md');
+
+
+    }
+
+    /**
+     * Generate the API documentation using the markdown and include files and provided versions
+     *
+     * @param $folder
+     * @param $apiVersions
+     */
+    public function generate($folder, $apiVersions)
+    {
+
+        if(count($apiVersions) > 0) {
+            $_versions = $apiVersions;
+        }else{
+            $_versions = array_map('basename', array_values(array_filter(glob($folder . '/*'), 'is_dir')));
+        }
+
+        foreach($_versions as $version) {
+            info('Generating documentation for version ' . $version);
+            $res = $this->generateVersion($folder, $version);
+            if(!$res){
+                output("<fg=red>Could not generate documentation for version '$version': no such file or directory</>");
+            }
+        }
+
     }
 
     /**
@@ -63,9 +113,9 @@ class Documentarian
      * @param $folder
      * @return false|null
      */
-    public function generate($folder)
+    public function generateVersion($folder, $version)
     {
-        $source_dir = $folder . '/source';
+        $source_dir = $folder . '/' . $version;
 
         if (!is_dir($source_dir)) {
             return false;
@@ -78,7 +128,7 @@ class Documentarian
         $frontmatter = $document->getYAML();
         $html = $document->getContent();
 
-        $renderer = new BladeRenderer([__DIR__ . '/../resources/views'], ['cache_path' => $source_dir . '/_tmp']);
+        $renderer = new BladeRenderer([$folder . '/../views'], ['cache_path' => $source_dir . '/_tmp']);
 
         // Parse and include optional include markdown files
         if (isset($frontmatter['includes'])) {
@@ -95,11 +145,9 @@ class Documentarian
             'content' => $html
         ]);
 
-        file_put_contents($folder . '/index.html', $output);
+        file_put_contents($folder . '/../public/' . $version . '.html', $output);
 
-        // Copy assets
-        rcopy($source_dir . '/assets/images/', $folder . '/images');
-        rcopy($source_dir . '/assets/stylus/fonts/', $folder . '/css/fonts');
+        return true;
     }
 
 }

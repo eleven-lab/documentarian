@@ -10,7 +10,7 @@ if (file_exists(__DIR__ . '/vendor/autoload.php')) {
     require __DIR__ . '/../../autoload.php';
 }
 
-use Mpociot\Documentarian\Documentarian;
+use ElevenLab\Documentarian\Documentarian;
 use Silly\Application;
 
 $documentarian = new Documentarian();
@@ -20,20 +20,36 @@ $app = new Application('Documentarian', 'v0.1.0');
 $app->command('create [folder]', function ($folder) use ($documentarian) {
     $folder = getcwd() . '/' . $folder;
     $documentarian->create($folder);
-    $documentarian->generate($folder);
+    //$documentarian->generate($folder);
     info('Created documentation in folder: ' . $folder);
 })->defaults([
     'folder' => '',
-]);;
+]);
 
-$app->command('generate', function () use ($documentarian) {
-    if (!is_dir(getcwd() . '/source')) {
+$app->command('create_version folder api_version', function($folder, $api_version) use ($documentarian){
+
+    $folder = getcwd() . '/' . $folder . '/source/';
+    if(!is_dir($folder)){
         output('<fg=red>Documentarian is not installed in the current folder.</>');
         output('<fg=red>Use `documentarian create` to initiate a new API documentation.</>');
+    }else {
+        $folder = $folder . $api_version;
+        $documentarian->createVersion($folder);
+        info('Created documentation version in folder: ' . $folder);
+    }
+
+});
+
+$app->command('generate folder [--api-version=]*', function ($folder, $apiVersion = []) use ($documentarian) {
+
+    if (!is_dir(getcwd() . '/' . $folder . '/source')) {
+        output('<fg=red>Documentarian is not installed in the specified folder.</>');
+        output('<fg=red>Use `documentarian create` to initiate a new API documentation.</>');
     } else {
-        $documentarian->generate(getcwd());
+        $documentarian->generate(getcwd() . '/' . $folder . '/source', $apiVersion);
         info('Generated documentation.');
     }
+
 });
 
 $app->run();

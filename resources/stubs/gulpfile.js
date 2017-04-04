@@ -15,8 +15,8 @@ var path = require('path');
  | file for our application, as well as publishing vendor resources.
  |
  */
-elixir.config.assetsPath = 'assets';
-elixir.config.publicPath = '../';
+elixir.config.publicPath = 'public';
+elixir.config.assetsPath = elixir.config.publicPath + '/assets';
 
 elixir.extend('generate_docs', function() {
     new Task('x_generate_docs', function() {

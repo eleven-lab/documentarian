@@ -1,5 +1,5 @@
 {
-  "name": "mpociot/documentarian",
+  "name": "elevenlab/documentarian",
   "description": "",
   "keywords": [],
   "license": "Apache 2",
@@ -7,6 +7,10 @@
     {
       "name": "Marcel Pociot",
       "email": "m.pociot@gmail.com"
+    },
+    {
+      "name": "Valerio Cervo",
+      "email": "valerio.cervo@moveax.it"
     }
   ],
   "autoload": {
@@ -14,7 +18,7 @@
       "includes/helpers.php"
     ],
     "psr-4": {
-      "Mpociot\\Documentarian\\": "src/"
+      "ElevenLab\\Documentarian\\": "src/"
     }
   },
   "bin": [
