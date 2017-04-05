@@ -51,6 +51,28 @@
             </ul>
         @endif
     </div>
+        <div class="versions">
+            <div class="versions-header">
+                <div class="version-label">Version</div>
+                @if(count($versions) > 0 and isset($versions) and isset($versions[$currentVersion]) and isset($versions[$currentVersion]['name']))
+                    <div class="current-version">{{ $versions[$currentVersion]['name'] }}</div>
+                @else
+                    <div class="current-version">{{ $currentVersion }}</div>
+                @endif
+            </div>
+            @if(count($versions) > 0)
+            <ul class="versions-list">
+                @foreach($versions as $name => $attrs)
+                    <li>
+                        <a href="@if(isset($attrs['link']) and $currentVersion !== $name) {{ $attrs['link'] }} @else # @endif"
+                           @if(isset($attrs['target']) and $currentVersion !== $name) target="{{ $attrs['target'] }}" @endif >
+                           @if(isset($attrs['name'])) {{ $attrs['name'] }} @else {{ $name }} @endif
+                        </a>
+                    </li>
+                @endforeach
+            </ul>
+        @endif
+    </div>
     <div class="page-wrapper">
       <div class="dark-box"></div>
       <div class="content">

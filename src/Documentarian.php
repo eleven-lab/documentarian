@@ -140,7 +140,18 @@ class Documentarian
             }
         }
 
+        // Parse versions and include into toc
+        if(!isset($frontmatter['versions'])){
+            $apiVersions = [];
+        }else {
+            $apiVersions = $frontmatter['versions'];
+        }
+        $apiVersions = !isset($frontmatter['versions']) ? [] : $frontmatter['versions'];
+        asort($apiVersions);
+
         $output = $renderer->render('index', [
+            'currentVersion' => $version,
+            'versions' => $apiVersions,
             'page' => $frontmatter,
             'content' => $html
         ]);

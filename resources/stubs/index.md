@@ -9,6 +9,14 @@ language_tabs:
 toc_footers:
   - <a href='#'>Sign Up for a Developer Key</a>
   - <a href='http://github.com/mpociot/whiteboard'>Documentation Powered by Whiteboard</a>
+  
+versions:
+  v1:
+    link: v1.html
+    target: _blank
+  v2:
+    name: stable
+    link: v2.html
 
 includes:
   - errors

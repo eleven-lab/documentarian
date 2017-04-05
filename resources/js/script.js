@@ -180,6 +180,7 @@
   var closeToc = function() {
     $(".tocify-wrapper").removeClass('open');
     $("#nav-button").removeClass('open');
+    $(".versions").removeClass('open');
   };
 
 
@@ -203,6 +204,7 @@
     $("#nav-button").click(function() {
       $(".tocify-wrapper").toggleClass('open');
       $("#nav-button").toggleClass('open');
+      $(".versions").toggleClass('open')
       return false;
     });
 
@@ -218,13 +220,30 @@
     }, 50);
   }
 
+  function makeVersionsList() {
+
+    var $versionsList = $('.versions-list');
+    var $versionsHeader = $('.versions-header');
+
+    $versionsHeader.click(function(){
+      $versionsList.toggle();
+    });
+
+  }
+
   $(function() {
     makeToc();
     animate();
     $('.content').imagesLoaded( function() {
       global.toc.calculateHeights();
     });
+
+    if($('.versions-list').length > 0){
+      makeVersionsList();
+    }
+
   });
+
 })(window);
 
 /**
@@ -301,4 +320,16 @@
   function unhighlight() {
     content.unhighlight(highlightOpts);
   }
+})();
+
+
+/**
+ * Versions List
+ * Expand and Hide
+ */
+(function () {
+  'use strict';
+
+
+
 })();

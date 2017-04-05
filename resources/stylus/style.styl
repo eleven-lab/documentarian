@@ -60,7 +60,7 @@ embossed-bg()
   z-index: 30
   top: 0
   left: 0
-  bottom: 0
+  bottom: 40px
   width: $nav-width
   background-color: $nav-bg
   font-size: 13px
@@ -408,6 +408,59 @@ embossed-bg()
       color: #ccc
       border-top: 1px solid #000
       border-bottom: 1px solid #404040
+.versions
+  position: fixed
+  width: $nav-width
+  bottom: 0
+  left: 0
+  z-index: 40
+  .versions-header
+    color: white
+    height: 40px
+    background-color: $versions-header-bg
+    line-height: 40px
+    padding-left: 10px
+    padding-right: 10px
+    cursor: pointer
+    .version-label
+      float: left
+    .current-version
+      float: right
+      font-weight: normal
+      color: $curr-version-text
+      &:after
+        content: "\f0d7"
+        font-family: 'FontAwesome';
+        margin-left: 5px
+        speak: none;
+        font-style: normal;
+        font-weight: normal;
+        font-variant: normal;
+        text-transform: none;
+        line-height: 1;
+  .versions-list
+    display: none
+    max-height: 200px
+    overflow-y: auto
+    overflow-x: hidden
+    background-color: $version-list-bg
+    padding: 0
+    margin: 0
+    & > li
+      height: 40px
+      line-height: 40px
+      & a
+        padding-left: 15px
+        margin: 0px
+        display: block
+        width: 100%
+        height: 100%
+        text-decoration: none
+        color: $versions-link-text
+        font-weight: normal
+      &:hover a
+        text-decoration: underline
+
 ////////////////////////////////////////////////////////////////////////////////
 // RESPONSIVE DESIGN
 ////////////////////////////////////////////////////////////////////////////////
@@ -415,6 +468,10 @@ embossed-bg()
 // There are also a couple styles disperesed
 @media (max-width: $tablet-width)
   .tocify-wrapper
+    left: -1*$nav-width
+    &.open
+      left: 0
+  .versions
     left: -1*$nav-width
     &.open
       left: 0
