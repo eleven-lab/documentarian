@@ -9,6 +9,7 @@ language_tabs:
 toc_footers:
   - <a href='#'>Sign Up for a Developer Key</a>
   - <a href='http://github.com/mpociot/whiteboard'>Documentation Powered by Whiteboard</a>
+  - <a href='http://github.com/eleven-lab/documentarian'>Generated with Documentarian</a>
   
 versions:
   v1:
