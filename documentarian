@@ -52,4 +52,20 @@ $app->command('generate folder [--api-version=]*', function ($folder, $apiVersio
 
 });
 
+$app->command('get_versions [folder]', function($folder) use ($documentarian){
+
+    if(!is_dir(getcwd() . '/' . $folder . '/source')){
+        output('<fg=red>Documentarian is not installed in the specified folder.</>');
+        output('<fg=red>Use `documentarian create` to initiate a new API documentation.</>');
+    }else{
+        $versions = $documentarian->getVersions(getcwd() . '/' . $folder . '/source');
+        foreach($versions as $version) {
+            info('Found version \'' . $version. '\' for documentation \'' . basename(realpath(getcwd() . '/' . $folder)) . '\'');
+        }
+    }
+
+})->defaults([
+    'folder' => ''
+]);
+
 $app->run();

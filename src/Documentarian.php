@@ -161,4 +161,12 @@ class Documentarian
         return true;
     }
 
+    public function getVersions($folder) {
+
+        $_versions = array_map('basename', array_values(array_filter(glob($folder . '/*'), 'is_dir')));
+
+        return $_versions;
+
+    }
+
 }
