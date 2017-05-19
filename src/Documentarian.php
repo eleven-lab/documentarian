@@ -18,11 +18,11 @@ class Documentarian
      * @param string $key
      * @return mixed
      */
-    public function config($folder, $key = null)
+    public function config($folder, $key = null, $default = null)
     {
         $config = include($folder . '/config.php');
 
-        return is_null($key) ? $config : array_get($config, $key);
+        return array_get($config, $key, $default);
     }
 
     /**
@@ -128,6 +128,10 @@ class Documentarian
         $frontmatter = $document->getYAML();
         $html = $document->getContent();
 
+        $config_folder = $folder . '/..';
+        $view = $this->config($config_folder, 'views.' . $version, $this->config($config_folder, 'views.default'));
+
+
         $renderer = new BladeRenderer([$folder . '/../views'], ['cache_path' => $source_dir . '/_tmp']);
 
         // Parse and include optional include markdown files
@@ -149,7 +153,7 @@ class Documentarian
         $apiVersions = !isset($frontmatter['versions']) ? [] : $frontmatter['versions'];
         asort($apiVersions);
 
-        $output = $renderer->render('index', [
+        $output = $renderer->render($view, [
             'currentVersion' => $version,
             'versions' => $apiVersions,
             'page' => $frontmatter,
